@@ -55,3 +55,12 @@ Instead of triggering state updates directly within the algorithm loops (which l
 1. **Clone the project**
    ```bash
    git clone [https://github.com/your-username/sort-visualizer.git](https://github.com/your-username/sort-visualizer.git)
+   ```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+3. **Start the development server**
+   ```bash
+   npm start
+   ```
