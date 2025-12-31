@@ -1,70 +1,57 @@
-# Getting Started with Create React App
+# 📊 Sort Visualizer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### [Live Demo 🚀](https://sort-visualizer-green.vercel.app/)
 
-In the project directory, you can run:
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
 
-### `npm start`
+An interactive web application built with **React** to visualize the sorting process of various algorithms. Designed with a sleek **Neumorphic UI**, this tool helps users understand how data structures move and change in real-time.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🎨 Preview & Design
+The application utilizes a **Neumorphic (Soft UI)** design language, emphasizing depth through subtle shadows and a clean, monochromatic color palette. 
 
-### `npm test`
+- **Primary Color:** `#ECF0F3` (Background)
+- **Accent Color:** `#5FB8FD` (Interactive elements)
+- **State Colors:** 🟡 Comparing | 🔴 Swapping | 🟢 Sorted
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🧠 Supported Algorithms
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| Algorithm | Time Complexity (Best) | Time Complexity (Worst) | Space Complexity |
+| :--- | :---: | :---: | :---: |
+| **Quick Sort** | $O(n \log n)$ | $O(n^2)$ | $O(\log n)$ |
+| **Merge Sort** | $O(n \log n)$ | $O(n \log n)$ | $O(n)$ |
+| **Heap Sort** | $O(n \log n)$ | $O(n \log n)$ | $O(1)$ |
+| **Bubble Sort** | $O(n)$ | $O(n^2)$ | $O(1)$ |
+| **Selection Sort** | $O(n^2)$ | $O(n^2)$ | $O(1)$ |
+| **Insertion Sort** | $O(n)$ | $O(n^2)$ | $O(1)$ |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🚀 Technical Implementation
 
-### `npm run eject`
+### Unified Animation Engine
+Instead of triggering state updates directly within the algorithm loops (which leads to "race conditions"), I implemented a **Command Pattern**:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. **Generation:** Algorithms act as "Pure Functions," returning an array of specific actions (e.g., `["compare", i, j]`).
+2. **Synchronization:** A custom `runUnifiedAnimation` handler iterates through these commands using a **Timeout Queue**.
+3. **Visualization:** The DOM is updated via refs and class manipulation to ensure 60fps performance without unnecessary React re-renders.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Key Features
+- **Dynamic Speed**: Real-time adjustment of visualization speed.
+- **Manual Input**: Custom array support via comma-separated integers.
+- **Interruptible State**: A robust **Reset** functionality that clears all background timeouts instantly.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🛠️ Installation & Setup
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. **Clone the project**
+   ```bash
+   git clone [https://github.com/your-username/sort-visualizer.git](https://github.com/your-username/sort-visualizer.git)
