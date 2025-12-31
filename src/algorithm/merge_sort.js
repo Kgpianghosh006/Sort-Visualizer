@@ -3,58 +3,51 @@ export const MergeSort = (array) => {
     if (array.length <= 1) return animations;
   
     const auxiliaryArray = array.slice();
-    const sortedArray = array.slice();
-    
-    mergeSortHelper(sortedArray, 0, sortedArray.length - 1, auxiliaryArray, animations);
+    mergeSortHelper(array, 0, array.length - 1, auxiliaryArray, animations);
     return animations;
-  };
+};
   
-  const mergeSortHelper = (sortedArray, startIdx, endIdx, auxiliaryArray, animations) => {
+const mergeSortHelper = (mainArray, startIdx, endIdx, auxiliaryArray, animations) => {
     if (startIdx === endIdx) return;
   
     const middleIdx = Math.floor((startIdx + endIdx) / 2);
-    mergeSortHelper(auxiliaryArray, startIdx, middleIdx, sortedArray, animations);
-    mergeSortHelper(auxiliaryArray, middleIdx + 1, endIdx, sortedArray, animations);
+    // Note: We swap main and auxiliary here to maintain the merge logic
+    mergeSortHelper(auxiliaryArray, startIdx, middleIdx, mainArray, animations);
+    mergeSortHelper(auxiliaryArray, middleIdx + 1, endIdx, mainArray, animations);
+    doMerge(mainArray, startIdx, middleIdx, endIdx, auxiliaryArray, animations);
+};
   
-    doMerge(sortedArray, startIdx, middleIdx, endIdx, auxiliaryArray, animations);
-  };
-  
-  const doMerge = (sortedArray, startIdx, middleIdx, endIdx, auxiliaryArray, animations) => {
+const doMerge = (mainArray, startIdx, middleIdx, endIdx, auxiliaryArray, animations) => {
     let k = startIdx;
     let i = startIdx;
     let j = middleIdx + 1;
   
     while (i <= middleIdx && j <= endIdx) {
-      // Push two indices that are being compared
-      animations.push([i, j]);
-      // Push two indices again, to change their color back
-      animations.push([i, j]);
+        // Comparison animation
+        animations.push(["compare", i, j]);
+        animations.push(["uncompare", i, j]);
   
-      if (auxiliaryArray[i] <= auxiliaryArray[j]) {
-        // Push index and its new height
-        animations.push([k, auxiliaryArray[i]]);
-        sortedArray[k++] = auxiliaryArray[i++]; // Update the sortedArray copy
-      } else {
-        // Push index and its new height
-        animations.push([k, auxiliaryArray[j]]);
-        sortedArray[k++] = auxiliaryArray[j++]; // Update the sortedArray copy
-      }
+        if (auxiliaryArray[i] <= auxiliaryArray[j]) {
+            // Overwrite animation: index k gets value from auxiliaryArray[i]
+            animations.push(["overwrite", k, auxiliaryArray[i]]);
+            mainArray[k++] = auxiliaryArray[i++];
+        } else {
+            animations.push(["overwrite", k, auxiliaryArray[j]]);
+            mainArray[k++] = auxiliaryArray[j++];
+        }
     }
   
     while (i <= middleIdx) {
-      animations.push([i, i]);
-      animations.push([i, i]);
-  
-      animations.push([k, auxiliaryArray[i]]);
-      sortedArray[k++] = auxiliaryArray[i++]; // Update the sortedArray copy
+        animations.push(["compare", i, i]);
+        animations.push(["uncompare", i, i]);
+        animations.push(["overwrite", k, auxiliaryArray[i]]);
+        mainArray[k++] = auxiliaryArray[i++];
     }
   
     while (j <= endIdx) {
-      animations.push([j, j]);
-      animations.push([j, j]);
-  
-      animations.push([k, auxiliaryArray[j]]);
-      sortedArray[k++] = auxiliaryArray[j++]; // Update the sortedArray copy
+        animations.push(["compare", j, j]);
+        animations.push(["uncompare", j, j]);
+        animations.push(["overwrite", k, auxiliaryArray[j]]);
+        mainArray[k++] = auxiliaryArray[j++];
     }
-  };
-  
+};

@@ -14,11 +14,14 @@ function Control({ handleNewArrayGenrate, setSpeed, isSorting, handleSorting, us
             <button className="neu-button" onClick={reSet} >
                 Reset
             </button>
-            <select className='neumorphism-dropdown' value={selectedSorting} onChange={handleSorting}>
+            <select className='neumorphism-dropdown' value={selectedSorting} onChange={handleSorting} disabled={isSorting}>
                 <option value=''>Select Sorting</option>
-                <option value='bubbleSort'>Bubble Sorting</option>
+                <option value='bubbleSort'>Bubble Sort</option>
                 <option value="mergeSort">Merge Sort</option>
-                <option value="selectionSort">SelectionSort Sort</option>
+                <option value="selectionSort">Selection Sort</option>
+                <option value="insertionSort">Insertion Sort</option>
+                <option value="quickSort">Quick Sort</option>
+                <option value="heapSort">Heap Sort</option>
             </select>
             <label>
                 Speed:

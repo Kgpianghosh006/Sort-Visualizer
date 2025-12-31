@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Visualiser from "./control/Visualiser";
 import Control from "./control/Control";
 import { bubbleSort } from "./algorithm/bubble_sort";
@@ -8,171 +8,139 @@ import { MergeSort } from "./algorithm/merge_sort";
 import { quickSort } from "./algorithm/quick_sort";
 import { selectionSort } from "./algorithm/selection_sort";
 
-
 function App() {
   const [array, setArray] = useState([]);
   const [userInuptArray, setUserInuptArray] = useState('');
   const [speed, setSpeed] = useState(100);
   const [isSorting, setIsSorting] = useState(false);
   const [selectedSorting, setSelectedSorting] = useState('');
+  
+  const timeoutsRef = useRef([]);
 
   useEffect(() => {
+    if (!userInuptArray) return;
     const userInput = userInuptArray.split(',');
-    const filteredInput = userInput.filter(item => !isNaN(item) && Number.isInteger(parseFloat(item))).map(item => Number(item) <= 500 && Number(item))
-    setArray([...filteredInput])
-  }, [userInuptArray])
+    const filteredInput = userInput
+      .filter(item => item.trim() !== '' && !isNaN(item))
+      .map(item => Math.min(Number(item), 500));
+    setArray([...filteredInput]);
+  }, [userInuptArray]);
 
-  const handleNewArrayGenrate = () => {
-    const newArray = Array.from({ length: 15 }, () =>
-      Math.floor(Math.random() * 500)
-    );
-    setArray(newArray)
-  }
-  const reSet = () => {
-    setArray([])
-    setSelectedSorting('')
+  const clearAllTimeouts = () => {
+    timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    timeoutsRef.current = [];
   };
+
+  const reSet = () => {
+    clearAllTimeouts();
+    setArray([]);
+    setSelectedSorting('');
+    setUserInuptArray('');
+    setIsSorting(false);
+    
+    const bars = document.getElementsByClassName('bar');
+    for (let bar of bars) {
+      bar.style.backgroundColor = '#5fb8fd';
+    }
+  };
+
   const handleSorting = (e) => {
     const sortingMethod = e.target.value;
+    if (!sortingMethod || array.length === 0) return;
+    
     setSelectedSorting(sortingMethod);
     setIsSorting(true);
-    let animationArr = [];
+    let animations = [];
+    const arrayCopy = [...array];
     switch (sortingMethod) {
       case 'bubbleSort':
-        animationArr = bubbleSort(array);
-        bubbleAnimation(animationArr)
+        animations = bubbleSort(arrayCopy);
+        runUnifiedAnimation(animations);
         break;
       case "mergeSort":
-        animationArr = MergeSort(array);
-        animateMergeSorting(animationArr);
+        runUnifiedAnimation(MergeSort(arrayCopy));
         break;
       case "selectionSort":
-        animationArr = selectionSort(array);
-        animateSelectionSorting(animationArr);
+        animations = selectionSort(arrayCopy);
+        runUnifiedAnimation(animations);
         break;
       case "heapSort":
-        animationArr = heapSort(array);
-        animateSelectionSorting(animationArr);
+        runUnifiedAnimation(heapSort(arrayCopy));
+        break;
       case "insertionSort":
-        animationArr = insertionSort(array);
-        animateSelectionSorting(animationArr);
+        runUnifiedAnimation(insertionSort(arrayCopy));
         break;
       case "quickSort":
-        animationArr = quickSort(array);
-        animateSelectionSorting(animationArr);
+        runUnifiedAnimation(quickSort(arrayCopy));
         break;
       default:
         break;
     }
-  }
-  function bubbleAnimation(animation) {
-    const barEle = document.getElementsByClassName('bar');
-    for (let i = 0; i < animation.length; i++) {
-      let [barOneInd, bartwoInd, swap] = animation[i];
-      let barOne = barEle[barOneInd];
-      let barTwo = barEle[bartwoInd];
-      setTimeout(() => {
-        barOne.style.backgroundColor = swap ? 'red' : 'yellow';
-        barTwo.style.backgroundColor = swap ? 'red' : 'yellow';
-        if (swap) {
-          const heightTemp = barOne.style.height;
-          barOne.style.height = barTwo.style.height;
-          barTwo.style.height = heightTemp;
-          const content = barOne.innerText;
-          barOne.innerText = barTwo.innerText;
-          barTwo.innerText = content;
-        }
-        setTimeout(() => {
-          barOne.style.backgroundColor = 'blue'
-          barTwo.style.backgroundColor = 'blue'
-        }, speed)
-      }, i * speed);
-    }
-    setTimeout(() => {
-      for (let j = 0; j < barEle.length; j++) {
-        setTimeout(() => {
-          barEle[j].style.backgroundColor = 'green';
-        }, j * speed);
-      }
-      setIsSorting(false);
-    }, animation.length * speed)
-  }
-  const animateMergeSorting = (animations) => {
-    const bars = document.getElementsByClassName("bar");
-    for (let i = 0; i < animations.length; i++) {
-      const isColorChange = i % 3 !== 2;
-      if (isColorChange) {
-        const [barOneIdx, barTwoIdx] = animations[i];
-        const barOne = bars[barOneIdx];
-        const barTwo = bars[barTwoIdx];
-        const color = i % 3 === 0 ? "yellow" : "blue";
-        setTimeout(() => {
-          barOne.style.backgroundColor = color;
-          barTwo.style.backgroundColor = color;
-        }, i * speed);
-      } else {
-        setTimeout(() => {
-          const [barOneIdx, newHeight] = animations[i];
-          const barOne = bars[barOneIdx];
-          barOne.style.height = `${newHeight}px`;
-          barOne.innerHTML = newHeight;
-        }, i * speed);
-      }
-    }
+  };
 
-    setTimeout(() => {
-      for (let j = 0; j < bars.length; j++) {
-        setTimeout(() => {
-          bars[j].style.backgroundColor = "green";
-        }, j * speed);
-      }
-      setIsSorting(false);
-    }, animations.length * speed);
-  };
-  const animateSelectionSorting = (animations) => {
+  const runUnifiedAnimation = (animations) => {
     const bars = document.getElementsByClassName("bar");
-    for (let i = 0; i < animations.length; i++) {
-      const [barOneIdx, barTwoIdx, swap] = animations[i];
-      const barOne = bars[barOneIdx];
-      const barTwo = bars[barTwoIdx];
-      setTimeout(() => {
-        barOne.style.backgroundColor = swap ? "red" : "yellow";
-        barTwo.style.backgroundColor = swap ? "red" : "yellow";
-        if (swap) {
-          const tempHeight = barOne.style.height;
-          barOne.style.height = barTwo.style.height;
-          barTwo.style.height = tempHeight;
-          const tempContent = barOne.innerHTML;
-          barOne.innerHTML = barTwo.innerHTML;
-          barTwo.innerHTML = tempContent;
+    
+    animations.forEach(([type, ...args], i) => {
+      const timeout = setTimeout(() => {
+        if (type === "compare") {
+          const [idx1, idx2] = args;
+          if (bars[idx1]) bars[idx1].style.backgroundColor = "yellow";
+          if (bars[idx2]) bars[idx2].style.backgroundColor = "yellow";
+        } else if (type === "uncompare") {
+          const [idx1, idx2] = args;
+          if (bars[idx1]) bars[idx1].style.backgroundColor = "#5fb8fd";
+          if (bars[idx2]) bars[idx2].style.backgroundColor = "#5fb8fd";
+        } else if (type === "swap" || type === "overwrite") {
+          if (type === "swap") {
+            const [idx1, val1, idx2, val2] = args;
+            updateBar(idx1, val1, "red");
+            updateBar(idx2, val2, "red");
+          } else {
+            const [idx, val] = args;
+            updateBar(idx, val, "red");
+          }
         }
-        setTimeout(() => {
-          barOne.style.backgroundColor = "blue";
-          barTwo.style.backgroundColor = "blue";
-        }, speed);
       }, i * speed);
-    }
-    setTimeout(() => {
+      timeoutsRef.current.push(timeout);
+    });
+
+    const finalTimeout = setTimeout(() => {
       for (let j = 0; j < bars.length; j++) {
-        setTimeout(() => {
+        const t = setTimeout(() => {
           bars[j].style.backgroundColor = "green";
-        }, j * speed);
+        }, j * (speed / 4));
+        timeoutsRef.current.push(t);
       }
       setIsSorting(false);
     }, animations.length * speed);
+    timeoutsRef.current.push(finalTimeout);
   };
+
+  const updateBar = (idx, height, color) => {
+    const bars = document.getElementsByClassName("bar");
+    if (!bars[idx]) return;
+    bars[idx].style.height = `${height}px`;
+    bars[idx].innerText = height;
+    bars[idx].style.backgroundColor = color;
+    
+    const t = setTimeout(() => {
+      if (bars[idx]) bars[idx].style.backgroundColor = "#5fb8fd";
+    }, speed * 0.8);
+    timeoutsRef.current.push(t);
+  };
+
   return (
     <div className="App">
-      <h1>Sort_Visualizer</h1>
+      <h1>Sort Visualizer</h1>
       <Control
-        handleNewArrayGenrate={handleNewArrayGenrate}
+        handleNewArrayGenrate={() => { reSet(); const newArr = Array.from({ length: 15 }, () => Math.floor(Math.random() * 400) + 10); setArray(newArr); }}
         handleSorting={handleSorting}
         userInuptArray={userInuptArray}
         setUserInuptArray={setUserInuptArray}
         setSpeed={setSpeed}
         reSet={reSet}
         isSorting={isSorting}
-        speed={speed}
         selectedSorting={selectedSorting}
       />
       <Visualiser array={array} />
